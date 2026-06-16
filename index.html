@@ -234,7 +234,7 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI','Roboto',Arial,sans
         </div>
       </div>
       <div style="background:var(--blue-lt);border-left:3px solid var(--blue);border-radius:4px;padding:10px 14px;font-size:12px;color:var(--blue-dk);">
-        Fetches <strong>Fever case — suspected Malaria</strong> counts by age group.<br>• <strong>Facility</strong>: dataset <code>HF01 Outpatient morbidity</code> · DE <code>FJafyE1kzs4</code><br>• <strong>Community</strong>: dataset <code>HF04 Community Based Services</code> · DE <code>wfaQBIVQxWo</code><br>OUs fetched directly from each dataset's assigned organisation units — no OU type guessing.
+        Fetches <strong>Fever case — suspected Malaria</strong> counts by age group.<br>• <strong>Facility</strong>: dataset <code>HF01 Outpatient morbidity</code> · DE <code>FJafyE1kzs4</code><br>• <strong>Community</strong>: dataset <code>HF04 Community Based Services</code> · DE <code>wfaQBIVQxWo</code><br>OUs fetched directly from each dataset's assigned organisation units. Level-6 CHW/ETR/HTR units are automatically rolled up to their parent Level-5 MCHP — facilities without CHW children are handled gracefully.
         Computes the proportion of each age group within total suspected cases per facility, chiefdom, district, and month.
         Produces proportion charts, geographic maps, facility tracker, summary table, and downloadable Excel.
       </div>
@@ -764,6 +764,9 @@ function triggerDL(content, fname) {
 function normName(n) {
   return (n||'').toLowerCase()
     .replace(/\bchiefdom\b/g,'').replace(/\bdistrict\b/g,'').replace(/\bprovince\b/g,'')
+    .replace(/\barea\b/g,'')       // "Western Area Rural" → "Western Rural"
+    .replace(/\burban\b/g,'urban') // keep urban/rural as distinguishers
+    .replace(/\brural\b/g,'rural')
     .replace(/[-_]/g,' ').replace(/\s+/g,' ').trim();
 }
 
@@ -792,9 +795,9 @@ async function sa_startPipeline() {
     ['s3','Fetching facility data — HF01 Outpatient morbidity (FJafyE1kzs4)'],
     ['s3b','Fetching community data — HF04 Community Based Services (wfaQBIVQxWo)'],
     ['s4','Computing proportions'],
-    ['s5','Computing geographic rates'],
+    ['s5','Building aggregates'],
     ['s6','Loading GeoJSON'],
-    ['s7','Building aggregates'],
+    ['s7','Computing geographic rates'],
     ['s8','Drawing outputs'],
   ].forEach(([id,txt]) => addStep(id,txt));
 
@@ -806,22 +809,12 @@ async function sa_startPipeline() {
     // Only OUs assigned to each dataset can have data for it.
     setStep('s1','running');
 
-    // Facility types to keep — exact match against org unit group names
-    const KEEP_TYPES = ['mchp','chp','chc','clinic','hospital'];
-    const typeMatch  = (ou) => {
-      const grps = (ou.organisationUnitGroups||[]).map(g=>(g.name||'').toLowerCase().trim());
-      return KEEP_TYPES.some(t => grps.some(g => g === t || g.startsWith(t+' ') || g.endsWith(' '+t)));
-    };
-
-    // Fetch OUs for HF01 Outpatient morbidity — filter to 5 types
+    // Fetch OUs for HF01 Outpatient morbidity with ancestors for hierarchy
     const facDsResp = await dhis2(
       `/api/organisationUnits.json?filter=dataSets.id:eq:${DS_FAC}`
-      + `&fields=id,displayName,ancestors[id,displayName,level],organisationUnitGroups[name]`
-      + `&paging=false`
+      + `&fields=id,displayName,ancestors[id,displayName,level]&paging=false`
     );
-    let nFacSkipped = 0;
     (facDsResp.organisationUnits||[]).forEach(ou => {
-      if (!typeMatch(ou)) { nFacSkipped++; return; }
       const anc   = (ou.ancestors||[]).sort((a,b)=>a.level-b.level);
       const dist  = anc.find(a=>a.level===LEVEL_DIST);
       const chief = anc.find(a=>a.level===LEVEL_CHIEF);
@@ -833,55 +826,113 @@ async function sa_startPipeline() {
       };
     });
     const nFacDs = Object.keys(ST.orgHierarchy).length;
-    setStep('s1','running',
-      `HF01: ${nFacDs} kept (${nFacSkipped} other types excluded)`
-    );
 
-    // Fetch OUs for HF04 Community Based Services — filter to 5 types
+    // Fetch OUs for HF04 Community Based Services
+    // Strategy (confirmed in v4 test): collect ALL HF04 OUs, identify their level-5
+    // ancestor (the MCHP/CHP parent), build ST.config.l5CommOUs map for use in Step 3b.
+    // children=true on the data fetch will pull all descendants automatically.
     const commDsResp = await dhis2(
       `/api/organisationUnits.json?filter=dataSets.id:eq:${DS_COMM}`
-      + `&fields=id,displayName,ancestors[id,displayName,level],organisationUnitGroups[name]`
-      + `&paging=false`
+      + `&fields=id,displayName,level,ancestors[id,displayName,level]&paging=false`
     );
-    const commOuIds = new Set();
-    let nCommSkipped = 0;
+    // l5CommOUs: map of level-5 OU id → {id, name, districtName, chiefdomName}
+    // These are the OUs we fetch data against (with children=true)
+    const l5CommOUs = {};
+    // childToL5Comm: map any child OU id → its level-5 ancestor id (for grouping dataValues)
+    const childToL5Comm = {};
+
     (commDsResp.organisationUnits||[]).forEach(ou => {
-      if (!typeMatch(ou)) { nCommSkipped++; return; }
-      commOuIds.add(ou.id);
+      const anc   = (ou.ancestors||[]).sort((a,b)=>a.level-b.level);
+      const dist  = anc.find(a=>a.level===LEVEL_DIST);
+      const chief = anc.find(a=>a.level===LEVEL_CHIEF);
+      const l5Anc = anc.find(a=>a.level===LEVEL_PHU);
+
+      if (ou.level === LEVEL_PHU) {
+        // This OU is itself level-5
+        if (!l5CommOUs[ou.id]) {
+          l5CommOUs[ou.id] = {
+            id:ou.id, name:ou.displayName,
+            districtName: dist  ? dist.displayName : '',
+            chiefdomName: chief ? chief.displayName : '',
+          };
+        }
+      } else if (ou.level > LEVEL_PHU && l5Anc) {
+        // Child OU (level-6 CHW etc.) — register its level-5 ancestor
+        childToL5Comm[ou.id] = l5Anc.id;
+        if (!l5CommOUs[l5Anc.id]) {
+          const l5Dist  = anc.find(a=>a.level===LEVEL_DIST);
+          const l5Chief = anc.find(a=>a.level===LEVEL_CHIEF);
+          l5CommOUs[l5Anc.id] = {
+            id:l5Anc.id, name:l5Anc.displayName,
+            districtName: l5Dist  ? l5Dist.displayName  : '',
+            chiefdomName: l5Chief ? l5Chief.displayName : '',
+          };
+        }
+      }
+      // Also add to orgHierarchy if not already there
       if (!ST.orgHierarchy[ou.id]) {
-        const anc   = (ou.ancestors||[]).sort((a,b)=>a.level-b.level);
-        const dist  = anc.find(a=>a.level===LEVEL_DIST);
-        const chief = anc.find(a=>a.level===LEVEL_CHIEF);
         ST.orgHierarchy[ou.id] = {
           id:ou.id, name:ou.displayName,
+          level: ou.level || LEVEL_PHU,
           districtName: dist  ? dist.displayName : '',
           chiefdomName: chief ? chief.displayName : '',
           hfCode:'',
         };
       }
     });
-    const nAll    = Object.keys(ST.orgHierarchy).length;
-    const nCommDs = commOuIds.size;
-    ST.config.commOuIds = [...commOuIds];
+    ST.config.l5CommOUs    = l5CommOUs;
+    ST.config.childToL5Comm = childToL5Comm;
+    // Also fetch direct children of each L5 comm OU to catch any not in HF04 assignment
+    const l5CommIds = Object.keys(l5CommOUs);
+    const childBatchesComm = [];
+    for (let i=0;i<l5CommIds.length;i+=50) childBatchesComm.push(l5CommIds.slice(i,i+50));
+    for (const batch of childBatchesComm) {
+      const cResp = await dhis2(
+        `/api/organisationUnits.json?filter=parent.id:in:[${batch.join(',')}]`
+        + `&fields=id,parent[id]&paging=false`
+      );
+      (cResp.organisationUnits||[]).forEach(c => {
+        if (c.parent && c.parent.id) ST.config.childToL5Comm[c.id] = c.parent.id;
+      });
+      await sleep(60);
+    }
+    const nAll     = Object.keys(ST.orgHierarchy).length;
+    const nL5Comm  = Object.keys(ST.config.l5CommOUs).length;
+    const nChildren = Object.keys(ST.config.childToL5Comm).length;
     setStep('s1','done',
-      `HF01: ${nFacDs} · HF04: ${nCommDs} · Total: ${nAll} (MCHP/CHP/CHC/Clinic/Hospital only)`
-      + ` · Excluded: ${nFacSkipped} fac + ${nCommSkipped} comm other types`
+      `HF01: ${nFacDs} facility OUs · HF04: ${nL5Comm} level-5 comm OUs · ${nChildren} child OUs mapped · ${nAll} total`
     ); setProgress(12);
 
-    // ── Step 2: Assign HF codes + COC discovery ──
+    // ── Step 2: Assign HF codes · filter to facility types · COC discovery ──
     setStep('s2','running');
-    const facOuIds = Object.keys(ST.orgHierarchy);
-    const sorted = Object.values(ST.orgHierarchy).sort((a,b)=>
+    const allHierarchyIds = Object.keys(ST.orgHierarchy);
+
+    // Filter to level-5 OUs whose name matches a known facility type (MCHP/CHP/CHC/Hospital/Clinic)
+    // Level-6 CHW OUs are excluded here — they are only used for community data rollup
+    const isFacType = (name) => {
+      const n = (name||'').toLowerCase();
+      return FAC_TYPE_NAMES.some(t => n.includes(t));
+    };
+    const facOuIds = allHierarchyIds.filter(id => {
+      const ou = ST.orgHierarchy[id];
+      return (ou.level === undefined || ou.level === LEVEL_PHU) && isFacType(ou.name);
+    });
+
+    // ouIds = the filtered facility list used throughout Step 4 onwards
+    const ouIds = facOuIds;
+
+    const sorted = [...facOuIds].map(id=>ST.orgHierarchy[id]).sort((a,b)=>
       (a.districtName+a.name).localeCompare(b.districtName+b.name));
     sorted.forEach((ou,i) => {
-      ST.orgHierarchy[ou.id].hfCode = 'HF'+String(i+1).padStart(String(nAll).length,'0');
+      ST.orgHierarchy[ou.id].hfCode = 'HF'+String(i+1).padStart(String(facOuIds.length).length,'0');
     });
     ST.config.facOuIds = facOuIds;
     // COC UIDs are confirmed correct from metadata file — use directly
     // FJafyE1kzs4: 0-59m=m5T8uBNB8aN, 05-14y=j7j6iaknOFn, 15+y=zK1aiw8zFac
     // wfaQBIVQxWo: 02-59m=NtjMVmRfvHH, 05-14y=qDXW7WMLT99, 15+y=mdjRPpvLKdu
+    const nFiltered = allHierarchyIds.length - facOuIds.length;
     setStep('s2','done',
-      `${nAll} OUs assigned · Fac COCs: ${COC_AGE0}/${COC_AGE1}/${COC_AGE2} · Comm COCs: ${COC_C0}/${COC_C1}/${COC_C2}`
+      `${facOuIds.length} facility OUs (MCHP/CHP/CHC/Hospital/Clinic) · ${nFiltered} non-facility OUs excluded · Fac COCs: ${COC_AGE0}/${COC_AGE1}/${COC_AGE2}`
     ); setProgress(18);
 
     // ── Step 3: Fetch facility data — dataSet=HF01 + dataElement=FJafyE1kzs4 ──
@@ -901,10 +952,10 @@ async function sa_startPipeline() {
       if (!ST.rawByDE[dv.orgUnit][dv.period]) ST.rawByDE[dv.orgUnit][dv.period] = {age0:0,age1:0,age2:0,total:0};
       const val  = parseFloat(dv.value)||0;
       const slot = ST.rawByDE[dv.orgUnit][dv.period];
-      if      (dv.categoryOptionCombo===COC_AGE0) slot.age0+=val;
-      else if (dv.categoryOptionCombo===COC_AGE1) slot.age1+=val;
-      else if (dv.categoryOptionCombo===COC_AGE2) slot.age2+=val;
-      slot.total+=val;
+      if      (dv.categoryOptionCombo===COC_AGE0){slot.age0+=val;slot.total+=val;}
+      else if (dv.categoryOptionCombo===COC_AGE1){slot.age1+=val;slot.total+=val;}
+      else if (dv.categoryOptionCombo===COC_AGE2){slot.age2+=val;slot.total+=val;}
+      // unrecognised COCs silently ignored
     };
 
     for (const ob of facB) {
@@ -922,75 +973,80 @@ async function sa_startPipeline() {
     setStep('s3','done',`Facility data: ${Object.keys(ST.rawByDE).length} OUs with data`);
     setProgress(55);
 
-    // ── Step 3b: Community data — dataSet=HF04 + dataElement=wfaQBIVQxWo ──
+    // ── Step 3b: Community data — HF04 with children=true (v4 confirmed approach) ──
+    // Fetch against level-5 OUs only using children=true so DHIS2 returns data for
+    // all descendants (CHWs etc.). Group-by level-5 parent during accumulation.
     setStep('s3b','running');
-    ST.commRawByDE = {};
-    let doneC = 0;
-    // Use HF04-assigned OUs specifically
-    const commOuArr = ST.config.commOuIds;
+    ST.commRawByDE = {}; // commRawByDE[l5Id][period] = {age0,age1,age2,total}
+    const commL5Ids  = Object.keys(ST.config.l5CommOUs);
     const commB = [];
-    for (let i=0;i<commOuArr.length;i+=60) commB.push(commOuArr.slice(i,i+60));
+    for (let i=0;i<commL5Ids.length;i+=30) commB.push(commL5Ids.slice(i,i+30));
+    // smaller batches (30) because children=true expands result set
     const totalC = commB.length * pB.length;
-
-    const accumulateComm = (dv) => {
-      if (!ST.commRawByDE[dv.orgUnit]) ST.commRawByDE[dv.orgUnit] = {};
-      if (!ST.commRawByDE[dv.orgUnit][dv.period]) ST.commRawByDE[dv.orgUnit][dv.period] = {age0:0,age1:0,age2:0,total:0};
-      const val  = parseFloat(dv.value)||0;
-      const slot = ST.commRawByDE[dv.orgUnit][dv.period];
-      if      (dv.categoryOptionCombo===COC_C0) slot.age0+=val;
-      else if (dv.categoryOptionCombo===COC_C1) slot.age1+=val;
-      else if (dv.categoryOptionCombo===COC_C2) slot.age2+=val;
-      slot.total+=val;
-    };
+    let doneC = 0;
 
     for (const ob of commB) {
       for (const pb of pB) {
         const url2 = `/api/dataValueSets.json?dataSet=${DS_COMM}&dataElement=${DE_COMM}`
-          + `&orgUnit=${ob.join(',')}&period=${pb.join(',')}&children=false`;
+          + `&orgUnit=${ob.join(',')}&period=${pb.join(',')}&children=true`;
         const resp2 = await dhis2(url2);
-        (resp2.dataValues||[]).forEach(accumulateComm);
+        (resp2.dataValues||[]).forEach(dv => {
+          const val = parseFloat(dv.value)||0;
+          // Resolve which level-5 this dataValue belongs to
+          const l5Id = ST.config.l5CommOUs[dv.orgUnit]
+            ? dv.orgUnit                          // dv is from the L5 OU itself
+            : (ST.config.childToL5Comm[dv.orgUnit] || null); // dv is from a child
+          if (!l5Id) return;
+          if (!ST.commRawByDE[l5Id]) ST.commRawByDE[l5Id] = {};
+          if (!ST.commRawByDE[l5Id][dv.period]) ST.commRawByDE[l5Id][dv.period] = {age0:0,age1:0,age2:0,total:0};
+          const s = ST.commRawByDE[l5Id][dv.period];
+          if      (dv.categoryOptionCombo===COC_C0){s.age0+=val;s.total+=val;}
+          else if (dv.categoryOptionCombo===COC_C1){s.age1+=val;s.total+=val;}
+          else if (dv.categoryOptionCombo===COC_C2){s.age2+=val;s.total+=val;}
+          // unrecognised COCs silently ignored
+        });
         doneC++;
         setStep('s3b','running',`Batch ${doneC}/${totalC} · ${pb[0]}→${pb[pb.length-1]}`);
         setProgress(55+Math.round((doneC/totalC)*10));
         await sleep(60);
       }
     }
-    setStep('s3b','done',`Community data: ${Object.keys(ST.commRawByDE).length} OUs with data`);
+    setStep('s3b','done',`Community data: ${Object.keys(ST.commRawByDE).length} level-5 OUs with data`);
     setProgress(65);
 
     // ── Step 4: Compute proportions ──
     setStep('s4','running');
+
+    // Facility data — straight from rawByDE (HF01, level-5 MCHPs only)
     ST.facData = [];
-    ST.config.facOuIds.forEach(ouId => {
-      const ou = ST.orgHierarchy[ouId]; if(!ou) return;
+    ouIds.forEach(ouId => {
+      const ou = ST.orgHierarchy[ouId];
+      if (!ou) return;
       ST.config.periods.forEach(per => {
-        const slot  = (ST.rawByDE[ouId]||{})[per] || { age0:0, age1:0, age2:0, total:0 };
-        const age0  = slot.age0;
-        const age1  = slot.age1;
-        const age2  = slot.age2;
-        // total = sum of ALL COC rows for FJafyE1kzs4 (accumulated during fetch)
-        // Formula: (COC_age / total) * 100  — e.g. (0-59m COC / total) * 100
-        const total = slot.total;
-        const denom = total > 0 ? total : null;
+        const slot = (ST.rawByDE[ouId]||{})[per] || {age0:0,age1:0,age2:0,total:0};
+        const {age0,age1,age2,total} = slot;
+        const denom = total>0?total:null;
         ST.facData.push({
-          ouId, hfCode: ou.hfCode,
-          districtName: ou.districtName,
-          chiefdomName: ou.chiefdomName,
-          date: `${per.slice(0,4)}-${per.slice(4,6)}`,
+          ouId, hfCode:ou.hfCode,
+          districtName:ou.districtName, chiefdomName:ou.chiefdomName,
+          date:`${per.slice(0,4)}-${per.slice(4,6)}`,
           age0, age1, age2, total,
-          pct0: denom ? (age0/denom*100) : null,
-          pct1: denom ? (age1/denom*100) : null,
-          pct2: denom ? (age2/denom*100) : null,
+          pct0: denom?(age0/denom*100):null,
+          pct1: denom?(age1/denom*100):null,
+          pct2: denom?(age2/denom*100):null,
         });
       });
     });
-    // Community HTR/ETR — use HF04-assigned OUs
+
+    // Community data — already grouped at level-5 in commRawByDE by Step 3b
+    // Use ouIds (facility list) as the spine — so comm rows align 1:1 with fac rows
     ST.commData = [];
-    ST.config.commOuIds.forEach(ouId => {
-      const ou = ST.orgHierarchy[ouId]; if(!ou) return;
+    ouIds.forEach(ouId => {
+      const ou = ST.orgHierarchy[ouId];
+      if (!ou) return;
       ST.config.periods.forEach(per => {
-        const slot  = (ST.commRawByDE[ouId]||{})[per] || { age0:0, age1:0, age2:0, total:0 };
-        const age0=slot.age0, age1=slot.age1, age2=slot.age2, total=slot.total;
+        const slot = (ST.commRawByDE[ouId]||{})[per] || {age0:0,age1:0,age2:0,total:0};
+        const {age0,age1,age2,total} = slot;
         const denom = total>0?total:null;
         ST.commData.push({
           ouId, hfCode:ou.hfCode,
@@ -1003,7 +1059,8 @@ async function sa_startPipeline() {
         });
       });
     });
-    setStep('s4','done',`${ST.facData.length} fac + ${ST.commData.length} comm rows`); setProgress(70);
+    const nCommWith = Object.keys(ST.commRawByDE).length;
+    setStep('s4','done',`${ST.facData.length} fac rows · ${ST.commData.length} comm rows · ${nCommWith} comm OUs with data`); setProgress(70);
 
     // ── Step 5: Aggregates ──
     setStep('s5','running');
