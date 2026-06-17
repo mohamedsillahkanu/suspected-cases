@@ -187,6 +187,61 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI','Roboto',Arial,sans
 
 /* ── FOOTER ── */
 .page-footer{background:var(--blue-dk);color:rgba(255,255,255,.8);text-align:center;padding:14px;font-size:11px;margin-top:28px;}
+
+/* ══════════════════════════════════════════════
+   RESPONSIVE / MOBILE-FRIENDLY ADDITIONS
+   ══════════════════════════════════════════════ */
+@media (max-width: 480px) {
+  html { font-size: 13px; }
+  .page-header { padding: 14px 16px; }
+  .header-text h1 { font-size: 15px; }
+  .page-body { padding: 12px 10px; }
+  .card-body { padding: 14px 12px; }
+  .cfg-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .btn { padding: 8px 12px; font-size: 11px; }
+  .tab-btn { padding: 8px 12px; font-size: 12px; }
+  .maps-3col { grid-template-columns: 1fr !important; }
+  .trk-fac-grid { grid-template-columns: 1fr !important; }
+  .trk-fac { flex-direction: column; align-items: flex-start; gap: 5px; }
+  .trk-fac-ages { flex-wrap: wrap; }
+  .stat-pill { font-size: 11px; padding: 4px 10px; }
+  .data-table { font-size: 11px; }
+  .data-table th, .data-table td { padding: 7px 8px; }
+  #monthlyMapsGrid { grid-template-columns: repeat(2,1fr) !important; }
+}
+@media (max-width: 768px) {
+  .page-header { padding: 16px 18px; }
+  .header-row { gap: 12px; }
+  .page-body { padding: 16px 14px; }
+  .maps-3col { grid-template-columns: 1fr !important; }
+  .cfg-grid { grid-template-columns: 1fr 1fr; }
+  .tab-nav { overflow-x: auto; flex-wrap: nowrap; -webkit-overflow-scrolling: touch; }
+  .tab-btn { white-space: nowrap; flex-shrink: 0; }
+  .btn-row { gap: 6px; }
+  #monthlyMapsGrid { grid-template-columns: repeat(3,1fr) !important; }
+  .trk-fac-grid { grid-template-columns: 1fr !important; }
+  .canvas-wrap { padding-top: 90%; }
+}
+@media (max-width: 1024px) {
+  .maps-3col { grid-template-columns: 1fr 1fr !important; }
+}
+@media (pointer: coarse) {
+  .btn { min-height: 40px; }
+  .tab-btn { min-height: 40px; }
+  .form-control { min-height: 40px; font-size: 16px; }
+  select.form-control { font-size: 16px; }
+  .trk-dist-head, .trk-chief-head, .collap-head { min-height: 44px; }
+}
+.data-table-wrap { -webkit-overflow-scrolling: touch; }
+.trk-period-tabs { -webkit-overflow-scrolling: touch; }
+.tab-nav { -webkit-overflow-scrolling: touch; }
+canvas { max-width: 100%; display: block; }
+.month-map-card .mm-canvas-wrap { padding-top: 100%; }
+@media (max-width: 520px) {
+  #tab-downloads > div { grid-template-columns: 1fr !important; }
+  .btn-row { flex-direction: column; }
+  .btn-row .btn { width: 100%; justify-content: center; }
+}
 </style>
 </head>
 <body>
@@ -359,8 +414,7 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI','Roboto',Arial,sans
 
         </div>
 
-        <!-- ── TAB: GEO MAPS ── -->
-                <!-- TAB: COMMUNITY -->
+        <!-- TAB: COMMUNITY -->
         <div id="tab-comm" class="tab-pane">
           <div class="collap">
             <div class="collap-head" onclick="toggleCollap(this)" style="background:#e8f5e9;border-color:var(--green);"><h3 style="color:#155724;">Chart 3 — Community Monthly Age Proportions (Stacked 100%)</h3><span class="collap-chev" style="color:#155724;">▼</span></div>
@@ -419,7 +473,8 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI','Roboto',Arial,sans
           </div>
         </div>
 
-<div id="tab-geomaps" class="tab-pane">
+        <!-- TAB: GEO MAPS -->
+        <div id="tab-geomaps" class="tab-pane">
 
           <!-- Controls bar -->
           <div style="background:var(--blue-lt);border:1.5px solid var(--border);border-radius:8px;padding:12px 16px;margin-bottom:16px;">
@@ -462,7 +517,7 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI','Roboto',Arial,sans
           </div>
 
           <!-- Monthly Maps Grid -->
-          <div style="background:var(--blue);color:#fff;padding:10px 16px;border-radius:8px 8px 0 0;font-size:13px;font-weight:700;letter-spacing:.4px;display:flex;align-items:center;justify-content:space-between;">
+          <div style="background:var(--blue);color:#fff;padding:10px 16px;border-radius:8px 8px 0 0;font-size:13px;font-weight:700;letter-spacing:.4px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
             <span id="monthlyGridLabel">📅 Monthly Maps — % Share of Selected Age Group · January to December</span>
             <button class="btn btn-sm" style="background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);" onclick="sa_downloadMonthlyGrid()">↓ Download Monthly Grid (PNG)</button>
           </div>
@@ -470,7 +525,7 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI','Roboto',Arial,sans
           </div>
 
           <!-- Annual Summary Maps -->
-          <div style="background:var(--blue-dk);color:#fff;padding:10px 16px;border-radius:8px 8px 0 0;font-size:13px;font-weight:700;letter-spacing:.4px;display:flex;align-items:center;justify-content:space-between;">
+          <div style="background:var(--blue-dk);color:#fff;padding:10px 16px;border-radius:8px 8px 0 0;font-size:13px;font-weight:700;letter-spacing:.4px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
             <span>🗺 Annual Summary Maps</span>
             <button class="btn btn-gold btn-sm" onclick="sa_geoDownloadSubplot()">↓ Download Annual Subplot (PNG)</button>
           </div>
@@ -593,6 +648,27 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI','Roboto',Arial,sans
               </div>
             </div>
 
+            <div style="border:2px solid #004080;border-radius:10px;overflow:hidden;">
+              <div style="background:linear-gradient(135deg,#004080 0%,#1a6bb5 100%);color:#fff;padding:10px 16px;font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px;">
+                <span style="font-size:18px;">💾</span> Download This Tool
+              </div>
+              <div style="padding:16px;display:flex;flex-direction:column;gap:8px;">
+                <p style="font-size:12px;color:#3a5068;margin-bottom:4px;line-height:1.5;">
+                  Save a complete standalone copy of this tool with all interactive outputs,
+                  maps, charts, and data exactly as currently displayed. Open from any browser
+                  — phone, tablet, or laptop — no internet required after download.
+                </p>
+                <button class="btn btn-primary" onclick="sa_downloadToolHTML()" style="font-size:13px;padding:11px 18px;justify-content:center;">
+                  &#11015; Download nmcp_suspected_age_disagg_v1.html
+                </button>
+                <div style="font-size:11px;color:#6c7a89;margin-top:2px;line-height:1.6;">
+                  ✓ All charts, maps &amp; tables included &nbsp;·&nbsp;
+                  ✓ Fully offline &nbsp;·&nbsp;
+                  ✓ Mobile &amp; tablet friendly
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
 
@@ -617,35 +693,26 @@ const BASE_URL = 'https://sl.dhis2.org/hmis23';
 const AUTH     = 'Basic ' + btoa('musa-sillahkanu:Navigator/2024!');
 const LEVEL_PHU = 5, LEVEL_DIST = 2, LEVEL_CHIEF = 4;
 
-// Single dataElement: Fever case - suspected Malaria (Total)
-// Age breakdown comes from categoryOptionCombo UIDs on that one DE
-const DE_SUSP  = 'FJafyE1kzs4'; // The one dataElement fetched
-// Dataset UIDs — used to get OUs assigned to each dataset
-const DS_FAC   = 'ij1VNJwxKCh'; // HF01 Outpatient morbidity  → facility DE
-const DS_COMM  = 'nufVxEfy3Ps'; // HF04 Community Based Services → community DE
+const DE_SUSP  = 'FJafyE1kzs4';
+const DS_FAC   = 'ij1VNJwxKCh';
+const DS_COMM  = 'nufVxEfy3Ps';
 
-// Fallback COC UIDs (used only if discovery fails)
-// Facility DE: FJafyE1kzs4
-let COC_AGE0 = 'm5T8uBNB8aN'; // 0–59m  facility
-let COC_AGE1 = 'j7j6iaknOFn'; // 5–14y  facility
-let COC_AGE2 = 'zK1aiw8zFac'; // 15+y   facility
+let COC_AGE0 = 'm5T8uBNB8aN';
+let COC_AGE1 = 'j7j6iaknOFn';
+let COC_AGE2 = 'zK1aiw8zFac';
 
-// Community dataElement + COCs — Fever case (suspected malaria) in HTR and ETR
 const DE_COMM  = 'wfaQBIVQxWo';
-let COC_C0   = 'NtjMVmRfvHH'; // 02–59m community
-let COC_C1   = 'qDXW7WMLT99'; // 5–14y  community
-let COC_C2   = 'mdjRPpvLKdu'; // 15+y   community
+let COC_C0   = 'NtjMVmRfvHH';
+let COC_C1   = 'qDXW7WMLT99';
+let COC_C2   = 'mdjRPpvLKdu';
 
-// COC name patterns to match (lowercase contains)
 const FAC_COC_PATTERNS  = { age0:['0-59','0–59','02-59','02–59','under','u5','<5'], age1:['5-14','5–14'], age2:['15+','15 +','15y+','above 15','above15'] };
 const COMM_COC_PATTERNS = { age0:['02-59','02–59','0-59','0–59'], age1:['05-14','05–14','5-14','5–14'], age2:['15+','15y','15 +'] };
 
 const AGE_LABELS = { age0: '0–59m', age1: '5–14y', age2: '15+y' };
 const AGE_COLORS = { age0: '#e05c2b', age1: '#2171b5', age2: '#31a354' };
 
-// Facility type names to match in org unit groups (case-insensitive contains)
 const FAC_TYPE_NAMES = ['mchp','chp','chc','hospital','clinic'];
-// Community type names
 const COMM_TYPE_NAMES = ['chw','cho','community health','community post','community worker'];
 
 const CHIEFDOM_GEOJSON = 'https://raw.githubusercontent.com/mohamedsillahkanu/tpr/8b16cd164aa5116242b9e8e29ea777cf79a1b211/Chiefdom_shp.geojson';
@@ -655,7 +722,7 @@ const MONTH_NAMES = ['January','February','March','April','May','June',
                      'July','August','September','October','November','December'];
 
 // ═══════════════════════════════════════════════════════════════════
-//  MAP PALETTES  (same as v14)
+//  MAP PALETTES
 // ═══════════════════════════════════════════════════════════════════
 const MAP_PALETTES = {
   blues:    { name:'Blues',         colors:['#c6dbef','#9ecae1','#6baed6','#2171b5','#084594'], bg:'#ddeeff' },
@@ -693,13 +760,13 @@ function geoColor(rate) {
 // ═══════════════════════════════════════════════════════════════════
 let ST = {
   config: null,
-  orgHierarchy: {},     // {ouId: {id,name,districtName,chiefdomName,hfCode}}
-  rawByDE: {},          // {ouId: {period: {de_uid: value}}}
-  facData: [],          // facility rows
-  commData: [],         // community rows (same structure)
-  commRawByDE: {},      // {ouId:{period:{age0,age1,age2,total}}}
+  orgHierarchy: {},
+  rawByDE: {},
+  facData: [],
+  commData: [],
+  commRawByDE: {},
   geoCache: { chiefdomGeo:null, districtGeo:null, bbox:null },
-  geoRates: { district:{}, chiefdom:{} }, // by age group key
+  geoRates: { district:{}, chiefdom:{} },
 };
 
 // ═══════════════════════════════════════════════════════════════════
@@ -764,8 +831,8 @@ function triggerDL(content, fname) {
 function normName(n) {
   return (n||'').toLowerCase()
     .replace(/\bchiefdom\b/g,'').replace(/\bdistrict\b/g,'').replace(/\bprovince\b/g,'')
-    .replace(/\barea\b/g,'')       // "Western Area Rural" → "Western Rural"
-    .replace(/\burban\b/g,'urban') // keep urban/rural as distinguishers
+    .replace(/\barea\b/g,'')
+    .replace(/\burban\b/g,'urban')
     .replace(/\brural\b/g,'rural')
     .replace(/[-_]/g,' ').replace(/\s+/g,' ').trim();
 }
@@ -802,14 +869,8 @@ async function sa_startPipeline() {
   ].forEach(([id,txt]) => addStep(id,txt));
 
   try {
-    // ── Step 1: Fetch OUs assigned to HF01 (facility) and HF04 (community) datasets ──
-    // This is the correct approach — exactly what the dataset download tool does.
-    // HF01 Outpatient morbidity (DS_FAC) → FJafyE1kzs4 facility DE
-    // HF04 Community Based Services (DS_COMM) → wfaQBIVQxWo community DE
-    // Only OUs assigned to each dataset can have data for it.
     setStep('s1','running');
 
-    // Fetch OUs for HF01 Outpatient morbidity with ancestors for hierarchy
     const facDsResp = await dhis2(
       `/api/organisationUnits.json?filter=dataSets.id:eq:${DS_FAC}`
       + `&fields=id,displayName,ancestors[id,displayName,level]&paging=false`
@@ -827,18 +888,11 @@ async function sa_startPipeline() {
     });
     const nFacDs = Object.keys(ST.orgHierarchy).length;
 
-    // Fetch OUs for HF04 Community Based Services
-    // Strategy (confirmed in v4 test): collect ALL HF04 OUs, identify their level-5
-    // ancestor (the MCHP/CHP parent), build ST.config.l5CommOUs map for use in Step 3b.
-    // children=true on the data fetch will pull all descendants automatically.
     const commDsResp = await dhis2(
       `/api/organisationUnits.json?filter=dataSets.id:eq:${DS_COMM}`
       + `&fields=id,displayName,level,ancestors[id,displayName,level]&paging=false`
     );
-    // l5CommOUs: map of level-5 OU id → {id, name, districtName, chiefdomName}
-    // These are the OUs we fetch data against (with children=true)
     const l5CommOUs = {};
-    // childToL5Comm: map any child OU id → its level-5 ancestor id (for grouping dataValues)
     const childToL5Comm = {};
 
     (commDsResp.organisationUnits||[]).forEach(ou => {
@@ -848,7 +902,6 @@ async function sa_startPipeline() {
       const l5Anc = anc.find(a=>a.level===LEVEL_PHU);
 
       if (ou.level === LEVEL_PHU) {
-        // This OU is itself level-5
         if (!l5CommOUs[ou.id]) {
           l5CommOUs[ou.id] = {
             id:ou.id, name:ou.displayName,
@@ -857,7 +910,6 @@ async function sa_startPipeline() {
           };
         }
       } else if (ou.level > LEVEL_PHU && l5Anc) {
-        // Child OU (level-6 CHW etc.) — register its level-5 ancestor
         childToL5Comm[ou.id] = l5Anc.id;
         if (!l5CommOUs[l5Anc.id]) {
           const l5Dist  = anc.find(a=>a.level===LEVEL_DIST);
@@ -869,7 +921,6 @@ async function sa_startPipeline() {
           };
         }
       }
-      // Also add to orgHierarchy if not already there
       if (!ST.orgHierarchy[ou.id]) {
         ST.orgHierarchy[ou.id] = {
           id:ou.id, name:ou.displayName,
@@ -882,7 +933,6 @@ async function sa_startPipeline() {
     });
     ST.config.l5CommOUs    = l5CommOUs;
     ST.config.childToL5Comm = childToL5Comm;
-    // Also fetch direct children of each L5 comm OU to catch any not in HF04 assignment
     const l5CommIds = Object.keys(l5CommOUs);
     const childBatchesComm = [];
     for (let i=0;i<l5CommIds.length;i+=50) childBatchesComm.push(l5CommIds.slice(i,i+50));
@@ -903,12 +953,9 @@ async function sa_startPipeline() {
       `HF01: ${nFacDs} facility OUs · HF04: ${nL5Comm} level-5 comm OUs · ${nChildren} child OUs mapped · ${nAll} total`
     ); setProgress(12);
 
-    // ── Step 2: Assign HF codes · filter to facility types · COC discovery ──
     setStep('s2','running');
     const allHierarchyIds = Object.keys(ST.orgHierarchy);
 
-    // Filter to level-5 OUs whose name matches a known facility type (MCHP/CHP/CHC/Hospital/Clinic)
-    // Level-6 CHW OUs are excluded here — they are only used for community data rollup
     const isFacType = (name) => {
       const n = (name||'').toLowerCase();
       return FAC_TYPE_NAMES.some(t => n.includes(t));
@@ -918,7 +965,6 @@ async function sa_startPipeline() {
       return (ou.level === undefined || ou.level === LEVEL_PHU) && isFacType(ou.name);
     });
 
-    // ouIds = the filtered facility list used throughout Step 4 onwards
     const ouIds = facOuIds;
 
     const sorted = [...facOuIds].map(id=>ST.orgHierarchy[id]).sort((a,b)=>
@@ -927,20 +973,14 @@ async function sa_startPipeline() {
       ST.orgHierarchy[ou.id].hfCode = 'HF'+String(i+1).padStart(String(facOuIds.length).length,'0');
     });
     ST.config.facOuIds = facOuIds;
-    // COC UIDs are confirmed correct from metadata file — use directly
-    // FJafyE1kzs4: 0-59m=m5T8uBNB8aN, 05-14y=j7j6iaknOFn, 15+y=zK1aiw8zFac
-    // wfaQBIVQxWo: 02-59m=NtjMVmRfvHH, 05-14y=qDXW7WMLT99, 15+y=mdjRPpvLKdu
     const nFiltered = allHierarchyIds.length - facOuIds.length;
     setStep('s2','done',
       `${facOuIds.length} facility OUs (MCHP/CHP/CHC/Hospital/Clinic) · ${nFiltered} non-facility OUs excluded · Fac COCs: ${COC_AGE0}/${COC_AGE1}/${COC_AGE2}`
     ); setProgress(18);
 
-    // ── Step 3: Fetch facility data — dataSet=HF01 + dataElement=FJafyE1kzs4 ──
-    // Using dataSet param ensures DHIS2 only returns data entered via HF01 form
     setStep('s3','running');
     const pB = [];
     for (let i=0;i<ST.config.periods.length;i+=3) pB.push(ST.config.periods.slice(i,i+3));
-    // Batch facility OUs — 60 per batch
     const facB = [];
     for (let i=0;i<facOuIds.length;i+=60) facB.push(facOuIds.slice(i,i+60));
     const total = facB.length * pB.length;
@@ -955,7 +995,6 @@ async function sa_startPipeline() {
       if      (dv.categoryOptionCombo===COC_AGE0){slot.age0+=val;slot.total+=val;}
       else if (dv.categoryOptionCombo===COC_AGE1){slot.age1+=val;slot.total+=val;}
       else if (dv.categoryOptionCombo===COC_AGE2){slot.age2+=val;slot.total+=val;}
-      // unrecognised COCs silently ignored
     };
 
     for (const ob of facB) {
@@ -973,15 +1012,11 @@ async function sa_startPipeline() {
     setStep('s3','done',`Facility data: ${Object.keys(ST.rawByDE).length} OUs with data`);
     setProgress(55);
 
-    // ── Step 3b: Community data — HF04 with children=true (v4 confirmed approach) ──
-    // Fetch against level-5 OUs only using children=true so DHIS2 returns data for
-    // all descendants (CHWs etc.). Group-by level-5 parent during accumulation.
     setStep('s3b','running');
-    ST.commRawByDE = {}; // commRawByDE[l5Id][period] = {age0,age1,age2,total}
+    ST.commRawByDE = {};
     const commL5Ids  = Object.keys(ST.config.l5CommOUs);
     const commB = [];
     for (let i=0;i<commL5Ids.length;i+=30) commB.push(commL5Ids.slice(i,i+30));
-    // smaller batches (30) because children=true expands result set
     const totalC = commB.length * pB.length;
     let doneC = 0;
 
@@ -992,10 +1027,9 @@ async function sa_startPipeline() {
         const resp2 = await dhis2(url2);
         (resp2.dataValues||[]).forEach(dv => {
           const val = parseFloat(dv.value)||0;
-          // Resolve which level-5 this dataValue belongs to
           const l5Id = ST.config.l5CommOUs[dv.orgUnit]
-            ? dv.orgUnit                          // dv is from the L5 OU itself
-            : (ST.config.childToL5Comm[dv.orgUnit] || null); // dv is from a child
+            ? dv.orgUnit
+            : (ST.config.childToL5Comm[dv.orgUnit] || null);
           if (!l5Id) return;
           if (!ST.commRawByDE[l5Id]) ST.commRawByDE[l5Id] = {};
           if (!ST.commRawByDE[l5Id][dv.period]) ST.commRawByDE[l5Id][dv.period] = {age0:0,age1:0,age2:0,total:0};
@@ -1003,7 +1037,6 @@ async function sa_startPipeline() {
           if      (dv.categoryOptionCombo===COC_C0){s.age0+=val;s.total+=val;}
           else if (dv.categoryOptionCombo===COC_C1){s.age1+=val;s.total+=val;}
           else if (dv.categoryOptionCombo===COC_C2){s.age2+=val;s.total+=val;}
-          // unrecognised COCs silently ignored
         });
         doneC++;
         setStep('s3b','running',`Batch ${doneC}/${totalC} · ${pb[0]}→${pb[pb.length-1]}`);
@@ -1014,10 +1047,8 @@ async function sa_startPipeline() {
     setStep('s3b','done',`Community data: ${Object.keys(ST.commRawByDE).length} level-5 OUs with data`);
     setProgress(65);
 
-    // ── Step 4: Compute proportions ──
     setStep('s4','running');
 
-    // Facility data — straight from rawByDE (HF01, level-5 MCHPs only)
     ST.facData = [];
     ouIds.forEach(ouId => {
       const ou = ST.orgHierarchy[ouId];
@@ -1038,8 +1069,6 @@ async function sa_startPipeline() {
       });
     });
 
-    // Community data — already grouped at level-5 in commRawByDE by Step 3b
-    // Use ouIds (facility list) as the spine — so comm rows align 1:1 with fac rows
     ST.commData = [];
     ouIds.forEach(ouId => {
       const ou = ST.orgHierarchy[ouId];
@@ -1062,12 +1091,10 @@ async function sa_startPipeline() {
     const nCommWith = Object.keys(ST.commRawByDE).length;
     setStep('s4','done',`${ST.facData.length} fac rows · ${ST.commData.length} comm rows · ${nCommWith} comm OUs with data`); setProgress(70);
 
-    // ── Step 5: Aggregates ──
     setStep('s5','running');
     sa_buildAggregates();
     setStep('s5','done','Aggregates built'); setProgress(74);
 
-    // ── Step 6: GeoJSON ──
     setStep('s6','running');
     if (!ST.geoCache.chiefdomGeo) {
       const [cg, dg] = await Promise.all([
@@ -1087,14 +1114,12 @@ async function sa_startPipeline() {
     }
     setStep('s6','done',`${(ST.geoCache.chiefdomGeo.features||[]).length} chiefdom features`); setProgress(83);
 
-    // ── Step 7: Geo rates ──
     setStep('s7','running');
     const defaultYear = ST.config.periods.slice(-1)[0].slice(0,4);
     sa_computeGeoRates(defaultYear);
     populateYearDropdown();
     setStep('s7','done',`Rates for ${defaultYear}`); setProgress(90);
 
-    // ── Step 8: Draw ──
     setStep('s8','running');
     document.getElementById('progressSection').style.display = 'none';
     document.getElementById('resultsSection').style.display  = 'block';
@@ -1114,7 +1139,6 @@ async function sa_startPipeline() {
     }
     setProgress(100);
 
-    // ── Stats ──
     const totSusp  = ST.facData.reduce((s,r)=>s+r.total,0);
     const totAge0  = ST.facData.reduce((s,r)=>s+r.age0,0);
     const totAge1  = ST.facData.reduce((s,r)=>s+r.age1,0);
@@ -1170,7 +1194,6 @@ function sa_reset() {
 let AGG = {};
 
 function sa_buildAggregates() {
-  // fac_ = facility source, com_ = community source, cmb_ = combined
   AGG = {
     natMonthly:{}, distMonthly:{}, distYearly:{}, chiefMonthly:{}, chiefYearly:{},
     com_natMonthly:{}, com_distMonthly:{}, com_distYearly:{}, com_chiefMonthly:{}, com_chiefYearly:{},
@@ -1180,38 +1203,32 @@ function sa_buildAggregates() {
     const yr = row.date.slice(0,4), mo = row.date.slice(5,7);
     const d  = row.districtName, c = row.chiefdomName;
 
-    // National monthly
     const nk = row.date;
     if (!AGG.natMonthly[nk]) AGG.natMonthly[nk] = {date:row.date,year:yr,month:mo,age0:0,age1:0,age2:0,total:0};
     AGG.natMonthly[nk].age0+=row.age0; AGG.natMonthly[nk].age1+=row.age1;
     AGG.natMonthly[nk].age2+=row.age2; AGG.natMonthly[nk].total+=row.total;
 
-    // District monthly
     const dmk = `${d}|${row.date}`;
     if (!AGG.distMonthly[dmk]) AGG.distMonthly[dmk]={district:d,date:row.date,year:yr,month:mo,age0:0,age1:0,age2:0,total:0};
     AGG.distMonthly[dmk].age0+=row.age0; AGG.distMonthly[dmk].age1+=row.age1;
     AGG.distMonthly[dmk].age2+=row.age2; AGG.distMonthly[dmk].total+=row.total;
 
-    // District yearly
     const dyk = `${d}|${yr}`;
     if (!AGG.distYearly[dyk]) AGG.distYearly[dyk]={district:d,year:yr,age0:0,age1:0,age2:0,total:0};
     AGG.distYearly[dyk].age0+=row.age0; AGG.distYearly[dyk].age1+=row.age1;
     AGG.distYearly[dyk].age2+=row.age2; AGG.distYearly[dyk].total+=row.total;
 
-    // Chiefdom monthly
     const cmk = `${c}|${row.date}`;
     if (!AGG.chiefMonthly[cmk]) AGG.chiefMonthly[cmk]={district:d,chiefdom:c,date:row.date,year:yr,month:mo,age0:0,age1:0,age2:0,total:0};
     AGG.chiefMonthly[cmk].age0+=row.age0; AGG.chiefMonthly[cmk].age1+=row.age1;
     AGG.chiefMonthly[cmk].age2+=row.age2; AGG.chiefMonthly[cmk].total+=row.total;
 
-    // Chiefdom yearly
     const cyk = `${c}|${yr}`;
     if (!AGG.chiefYearly[cyk]) AGG.chiefYearly[cyk]={district:d,chiefdom:c,year:yr,age0:0,age1:0,age2:0,total:0};
     AGG.chiefYearly[cyk].age0+=row.age0; AGG.chiefYearly[cyk].age1+=row.age1;
     AGG.chiefYearly[cyk].age2+=row.age2; AGG.chiefYearly[cyk].total+=row.total;
   });
 
-  // ── Community aggregates (same keys as facility, prefixed com_) ──
   ST.commData.forEach(row => {
     const yr=row.date.slice(0,4), mo=row.date.slice(5,7);
     const d=row.districtName, c=row.chiefdomName;
@@ -1237,7 +1254,6 @@ function sa_buildAggregates() {
     AGG.com_chiefYearly[cyk].age2+=row.age2; AGG.com_chiefYearly[cyk].total+=row.total;
   });
 
-  // Add proportions within-source
   const addPct = obj => Object.values(obj).forEach(r => {
     const d = r.total > 0 ? r.total : null;
     r.pct0 = d ? +(r.age0/d*100).toFixed(1) : null;
@@ -1246,14 +1262,11 @@ function sa_buildAggregates() {
   });
   Object.values(AGG).forEach(addPct);
 
-  // ── Combined indicators (cross-source) ──
-  // For each key that exists in fac natMonthly, merge with community
   AGG.cmbNatMonthly = {};
   Object.keys(AGG.natMonthly).forEach(k => {
     const F = AGG.natMonthly[k], C = AGG.com_natMonthly[k] || {age0:0,age1:0,age2:0,total:0};
     AGG.cmbNatMonthly[k] = makeCmb(F,C,k,'date');
   });
-  // Also catch community-only months
   Object.keys(AGG.com_natMonthly).forEach(k => {
     if(!AGG.cmbNatMonthly[k]){
       const F={age0:0,age1:0,age2:0,total:0}, C=AGG.com_natMonthly[k];
@@ -1278,32 +1291,22 @@ function sa_buildAggregates() {
   });
 }
 
-// Build combined row from facility (F) and community (C) objects
 function makeCmb(F, C, key, type) {
   const fmtP = (n,d) => d>0 ? +(n/d*100).toFixed(1) : null;
-  // Combined age totals
   const c_age0=F.age0+C.age0, c_age1=F.age1+C.age1, c_age2=F.age2+C.age2;
   const c_tot =F.total+C.total;
   const row = {
-    // facility
     fac_age0:F.age0, fac_age1:F.age1, fac_age2:F.age2, fac_total:F.total,
-    // community
     com_age0:C.age0, com_age1:C.age1, com_age2:C.age2, com_total:C.total,
-    // combined
     age0:c_age0, age1:c_age1, age2:c_age2, total:c_tot,
-    // copy keys
     date:F.date||C.date||key, year:F.year||C.year||(key.slice(0,4)),
     month:F.month||C.month, district:F.district||C.district||'',
     chiefdom:F.chiefdom||C.chiefdom||'',
-    // (1) age within each source: (fac_age0/fac_total)*100
     fac_pct0: fmtP(F.age0,F.total), fac_pct1: fmtP(F.age1,F.total), fac_pct2: fmtP(F.age2,F.total),
     com_pct0: fmtP(C.age0,C.total), com_pct1: fmtP(C.age1,C.total), com_pct2: fmtP(C.age2,C.total),
-    // (2) age share of combined total: (fac_age0+com_age0)/(fac_tot+com_tot)*100
     pct0: fmtP(c_age0,c_tot), pct1: fmtP(c_age1,c_tot), pct2: fmtP(c_age2,c_tot),
-    // (3) facility share of each age group: fac_age0/(fac_age0+com_age0)*100
     fac_share_age0: fmtP(F.age0,c_age0), fac_share_age1: fmtP(F.age1,c_age1), fac_share_age2: fmtP(F.age2,c_age2),
     com_share_age0: fmtP(C.age0,c_age0), com_share_age1: fmtP(C.age1,c_age1), com_share_age2: fmtP(C.age2,c_age2),
-    // (4) source share of total: fac_total/(fac_total+com_total)*100
     fac_share_total: fmtP(F.total,c_tot),
     com_share_total: fmtP(C.total,c_tot),
   };
@@ -1318,11 +1321,11 @@ function sa_redrawCharts() { sa_drawCharts(); }
 function sa_drawCharts() {
   sa_drawNationalMonthly('chCanvas1');
   sa_drawDistrictSummary('chCanvas2');
-  sa_drawNationalMonthly('chCanvas3', true);   // community
-  sa_drawDistrictSummary('chCanvas4', true);   // community
-  sa_drawCombinedAge('chCanvas5');             // combined age shares
-  sa_drawSourceByAge('chCanvas6');             // fac vs comm per age
-  sa_drawSourceTotal('chCanvas7');             // fac vs comm total
+  sa_drawNationalMonthly('chCanvas3', true);
+  sa_drawDistrictSummary('chCanvas4', true);
+  sa_drawCombinedAge('chCanvas5');
+  sa_drawSourceByAge('chCanvas6');
+  sa_drawSourceTotal('chCanvas7');
 }
 
 function sa_downloadChart(canvasId, suffix) {
@@ -1339,9 +1342,6 @@ function getChartDims() {
   };
 }
 
-// ─────────────────────────────────────────────────
-//  CHART 5: Combined age distribution (fac+comm) monthly
-// ─────────────────────────────────────────────────
 function sa_drawCombinedAge(canvasId) {
   const canvas=document.getElementById(canvasId); if(!canvas)return;
   const {W,H}=getChartDims();
@@ -1382,10 +1382,6 @@ function sa_drawCombinedAge(canvasId) {
   ctx.fillStyle='#aaa';ctx.font='9px Oswald,Arial,sans-serif';ctx.textAlign='right';ctx.fillText('ICF-SL / NMCP · Fac+Comm Combined',W-5,H-2);
 }
 
-// ─────────────────────────────────────────────────
-//  CHART 6: Facility vs Community share per age group — stacked 100% by age group
-//  Each bar = one age group; segments = facility share vs community share
-// ─────────────────────────────────────────────────
 function sa_drawSourceByAge(canvasId) {
   const canvas=document.getElementById(canvasId); if(!canvas)return;
   const {W,H}=getChartDims();
@@ -1401,31 +1397,16 @@ function sa_drawSourceByAge(canvasId) {
   const TITLE_H=52, LEG_H=48, XLAB_H=52, BOT=XLAB_H+10, LEFT=64, RIGHT=20;
   const bTop=TITLE_H+LEG_H, bBot=H-BOT, bH=bBot-bTop, bW=W-LEFT-RIGHT;
 
-  // 6 maximally distinct colours
-  // Facility (bottom segment): bold, saturated
-  // Community (top segment):   completely different hue — easy to compare at a glance
-  //
-  //  Age group  |  Facility          |  Community
-  //  0–59m      |  #d62728  (red)    |  #17becf  (cyan)
-  //  5–14y      |  #1f77b4  (blue)   |  #ff7f0e  (orange)
-  //  15+y       |  #2ca02c  (green)  |  #9467bd  (purple)
-  //
-  // Each pair is colour-wheel opposites → maximum contrast
   const COLS = {
-    fac0: '#d62728',  // red       — Fac 0-59m
-    com0: '#17becf',  // cyan      — Comm 0-59m
-    fac1: '#1f77b4',  // blue      — Fac 5-14y
-    com1: '#ff7f0e',  // orange    — Comm 5-14y
-    fac2: '#2ca02c',  // green     — Fac 15+y
-    com2: '#9467bd',  // purple    — Comm 15+y
+    fac0: '#d62728', com0: '#17becf',
+    fac1: '#1f77b4', com1: '#ff7f0e',
+    fac2: '#2ca02c', com2: '#9467bd',
   };
 
   ctx.fillStyle='#880e4f'; ctx.font='bold 14px Oswald,Arial,sans-serif';
   ctx.textAlign='center'; ctx.textBaseline='top';
   wrapText(ctx,title,W/2,8,W-40,19);
 
-  // Legend — 2 rows of 3 pairs, well spaced
-  // Legend grouped: Facility row then Community row for easy comparison
   const legItems=[
     {label:'Fac 0–59m (red)',    col:COLS.fac0},
     {label:'Fac 5–14y (blue)',   col:COLS.fac1},
@@ -1444,7 +1425,6 @@ function sa_drawSourceByAge(canvasId) {
     ctx.fillText(it.label, lx+20, TITLE_H+15); lx+=legItemW;
   });
 
-  // Y-axis gridlines
   for(let pct=0;pct<=100;pct+=20){
     const y=bTop+bH*(1-pct/100);
     ctx.fillStyle='#555'; ctx.font='10px Oswald,Arial,sans-serif';
@@ -1458,7 +1438,6 @@ function sa_drawSourceByAge(canvasId) {
     ctx.fillText('No data available',W/2,H/2); return;
   }
 
-  // Grouped bars: for each month, 3 sub-bars (age0, age1, age2)
   const n=rows.length;
   const grpW=bW/n;
   const barGap=Math.max(1, grpW*0.04);
@@ -1466,7 +1445,6 @@ function sa_drawSourceByAge(canvasId) {
 
   rows.forEach((row,i)=>{
     const grpCX = LEFT + i*grpW + grpW/2;
-    // Sub-bar x positions: centred as a group of 3
     const totalGrpW = barW*3 + barGap*2;
     const grpLeft   = grpCX - totalGrpW/2;
 
@@ -1481,10 +1459,8 @@ function sa_drawSourceByAge(canvasId) {
 
       let cumY=bTop+bH;
 
-      // ── Facility segment (bottom) ──
       const facH=bH*facP;
       ctx.fillStyle=facCol; ctx.fillRect(x, cumY-facH, barW, facH);
-      // White label inside
       if(facH>=14 && facP>=0.03){
         const fsz=Math.min(11,Math.max(7,barW*0.28));
         ctx.font=`bold ${fsz}px Oswald,Arial,sans-serif`;
@@ -1494,10 +1470,8 @@ function sa_drawSourceByAge(canvasId) {
       }
       cumY-=facH;
 
-      // ── Community segment (top) ──
       const comH=bH*comP;
       ctx.fillStyle=comCol; ctx.fillRect(x, cumY-comH, barW, comH);
-      // White label inside
       if(comH>=14 && comP>=0.03){
         const fsz=Math.min(11,Math.max(7,barW*0.28));
         ctx.font=`bold ${fsz}px Oswald,Arial,sans-serif`;
@@ -1506,12 +1480,10 @@ function sa_drawSourceByAge(canvasId) {
         ctx.fillText((comP*100).toFixed(1)+'%', x+barW/2, cumY-comH/2);
       }
 
-      // Thin separator line between segments
       ctx.strokeStyle='rgba(255,255,255,0.6)'; ctx.lineWidth=1;
       ctx.beginPath(); ctx.moveTo(x,cumY); ctx.lineTo(x+barW,cumY); ctx.stroke();
     });
 
-    // Age group mini-labels below each sub-bar group
     const AGE_NAMES=['0–59m','5–14y','15+y'];
     [0,1,2].forEach(ai=>{
       const x=grpLeft+ai*(barW+barGap);
@@ -1520,17 +1492,14 @@ function sa_drawSourceByAge(canvasId) {
       ctx.fillText(AGE_NAMES[ai], x+barW/2, bBot+2);
     });
 
-    // Month label centred under the group
     ctx.fillStyle='#333'; ctx.font='9px Oswald,Arial,sans-serif';
     ctx.textAlign='center'; ctx.textBaseline='top';
     ctx.fillText(row.date, grpCX, bBot+14);
   });
 
-  // Axis border
   ctx.strokeStyle='#e91e63'; ctx.lineWidth=1.5;
   ctx.strokeRect(LEFT,bTop,bW,bH);
 
-  // Axis labels
   ctx.fillStyle='#880e4f'; ctx.font='bold 11px Oswald,Arial,sans-serif';
   ctx.textAlign='center'; ctx.textBaseline='bottom';
   ctx.fillText('Month', LEFT+bW/2, H-2);
@@ -1542,9 +1511,6 @@ function sa_drawSourceByAge(canvasId) {
   ctx.fillText('ICF-SL / NMCP · Suspected Malaria Age Disaggregation', W-5, H-2);
 }
 
-// ─────────────────────────────────────────────────
-//  CHART 7: Facility vs Community share of TOTAL — stacked 100% monthly
-// ─────────────────────────────────────────────────
 function sa_drawSourceTotal(canvasId) {
   const canvas=document.getElementById(canvasId); if(!canvas)return;
   const {W,H}=getChartDims();
@@ -1584,7 +1550,6 @@ function sa_drawSourceTotal(canvasId) {
   ctx.fillStyle='#aaa';ctx.font='9px Oswald,Arial,sans-serif';ctx.textAlign='right';ctx.fillText('ICF-SL / NMCP',W-5,H-2);
 }
 
-// Chart 1/3: National monthly stacked 100% bar — isComm=true → community
 function sa_drawNationalMonthly(canvasId, isComm=false) {
   const canvas = document.getElementById(canvasId); if(!canvas) return;
   const ctx = canvas.getContext('2d');
@@ -1604,7 +1569,6 @@ function sa_drawNationalMonthly(canvasId, isComm=false) {
 
   ctx.fillStyle = '#ffffff'; ctx.fillRect(0,0,W,H);
 
-  // Layout
   const TITLE_H=52, LEG_H=34, XLAB_H=52, BOT=XLAB_H+10;
   const LEFT=64, RIGHT=20;
   const bTop = TITLE_H+LEG_H, bBot = H-BOT;
@@ -1615,12 +1579,10 @@ function sa_drawNationalMonthly(canvasId, isComm=false) {
     ctx.fillText('No data available',W/2,H/2); return;
   }
 
-  // Title
   ctx.fillStyle='#004080'; ctx.font='bold 14px Oswald,Arial,sans-serif';
   ctx.textAlign='center'; ctx.textBaseline='top';
   wrapText(ctx, title, W/2, 8, W-40, 19);
 
-  // Legend
   const lItems = [
     {label:'0–59m (Under-5)', color:AGE_COLORS.age0},
     {label:'5–14 years',      color:AGE_COLORS.age1},
@@ -1636,7 +1598,6 @@ function sa_drawNationalMonthly(canvasId, isComm=false) {
     ctx.fillText(item.label, lx+20, legY+8); lx+=140;
   });
 
-  // Y axis ticks (0–100%)
   ctx.fillStyle='#555'; ctx.font='10px Oswald,Arial,sans-serif';
   ctx.textAlign='right'; ctx.textBaseline='middle';
   for (let pct=0; pct<=100; pct+=20) {
@@ -1646,7 +1607,6 @@ function sa_drawNationalMonthly(canvasId, isComm=false) {
     ctx.beginPath(); ctx.moveTo(LEFT,y); ctx.lineTo(LEFT+bW,y); ctx.stroke();
   }
 
-  // Bars
   const n = rows.length;
   const barW = Math.max(2, bW/n - 2);
   const gap  = (bW - barW*n) / (n+1);
@@ -1658,9 +1618,8 @@ function sa_drawNationalMonthly(canvasId, isComm=false) {
     const p2 = d ? row.age2/d : 0;
     const x  = LEFT + gap + i*(barW+gap);
 
-    // Draw segments and collect positions for labels
     const segs = [[p0,AGE_COLORS.age0],[p1,AGE_COLORS.age1],[p2,AGE_COLORS.age2]];
-    const segInfo = []; // {y (centre), h, pct, col}
+    const segInfo = [];
     let cumY = bTop + bH;
     segs.forEach(([pct,col])=>{
       const segH = bH * pct;
@@ -1674,22 +1633,19 @@ function sa_drawNationalMonthly(canvasId, isComm=false) {
       ctx.fillRect(x, bTop, barW, bH);
     }
 
-    // % labels inside segments — only when segment is tall enough
-    const minLabelH = 12; // px minimum segment height to show label
+    const minLabelH = 12;
     const labelFontSz = Math.min(10, Math.max(7, barW * 0.35));
     ctx.font = `bold ${labelFontSz}px Oswald,Arial,sans-serif`;
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     segInfo.forEach(({cy, h, pct}) => {
-      if (h < minLabelH || pct < 0.03) return; // skip tiny segments
+      if (h < minLabelH || pct < 0.03) return;
       const txt = (pct*100).toFixed(1) + '%';
-      // White text with slight shadow for readability
       ctx.fillStyle = 'rgba(255,255,255,0.85)';
       ctx.fillText(txt, x + barW/2 + 1, cy + 1);
       ctx.fillStyle = '#1a1a1a';
       ctx.fillText(txt, x + barW/2, cy);
     });
 
-    // X label
     ctx.fillStyle='#333'; ctx.font='9px Oswald,Arial,sans-serif';
     ctx.textAlign='right'; ctx.textBaseline='middle';
     ctx.save();
@@ -1699,11 +1655,9 @@ function sa_drawNationalMonthly(canvasId, isComm=false) {
     ctx.restore();
   });
 
-  // Border
   ctx.strokeStyle='#004080'; ctx.lineWidth=1.5;
   ctx.strokeRect(LEFT, bTop, bW, bH);
 
-  // Axis labels
   ctx.fillStyle='#004080'; ctx.font='bold 11px Oswald,Arial,sans-serif';
   ctx.textAlign='center'; ctx.textBaseline='bottom';
   ctx.fillText('Time Period', LEFT+bW/2, H-2);
@@ -1715,7 +1669,6 @@ function sa_drawNationalMonthly(canvasId, isComm=false) {
   ctx.fillText('ICF-SL / NMCP · Suspected Malaria Age Disaggregation', W-5, H-2);
 }
 
-// Chart 2/4: District stacked 100% bar — isComm=true → community
 function sa_drawDistrictSummary(canvasId, isComm=false) {
   const canvas = document.getElementById(canvasId); if(!canvas) return;
   const ctx = canvas.getContext('2d');
@@ -1725,7 +1678,6 @@ function sa_drawDistrictSummary(canvasId, isComm=false) {
 
   const srcAgg = isComm ? AGG.com_distYearly : AGG.distYearly;
   const src2   = isComm ? 'Community (HTR/ETR)' : 'Facility';
-  // Aggregate by district across all years
   const distMap = {};
   Object.values(srcAgg).forEach(row => {
     if (!distMap[row.district]) distMap[row.district]={district:row.district,age0:0,age1:0,age2:0,total:0};
@@ -1754,12 +1706,10 @@ function sa_drawDistrictSummary(canvasId, isComm=false) {
     ctx.fillText('No data available',W/2,H/2); return;
   }
 
-  // Title
   ctx.fillStyle='#28a745'; ctx.font='bold 14px Oswald,Arial,sans-serif';
   ctx.textAlign='center'; ctx.textBaseline='top';
   wrapText(ctx, title, W/2, 8, W-40, 19);
 
-  // Legend
   const lItems = [
     {label:'0–59m (Under-5)', color:AGE_COLORS.age0},
     {label:'5–14 years',      color:AGE_COLORS.age1},
@@ -1775,7 +1725,6 @@ function sa_drawDistrictSummary(canvasId, isComm=false) {
     ctx.fillText(item.label,lx2+20,legY2+8); lx2+=140;
   });
 
-  // Y axis
   ctx.fillStyle='#555'; ctx.font='10px Oswald,Arial,sans-serif';
   ctx.textAlign='right'; ctx.textBaseline='middle';
   for (let pct=0; pct<=100; pct+=20) {
@@ -1797,7 +1746,6 @@ function sa_drawDistrictSummary(canvasId, isComm=false) {
       ctx.fillStyle=col; ctx.fillRect(x,cumY-segH,barW,segH); cumY-=segH;
     });
 
-    // X label (district name)
     const label = row.district.split(' ').map(w=>w.charAt(0)+w.slice(1).toLowerCase()).join(' ');
     ctx.fillStyle='#333'; ctx.font='10px Oswald,Arial,sans-serif';
     ctx.textAlign='right'; ctx.textBaseline='middle';
@@ -1807,9 +1755,7 @@ function sa_drawDistrictSummary(canvasId, isComm=false) {
     ctx.fillText(label,0,0);
     ctx.restore();
 
-    // Tooltip-like pct labels if bar wide enough
     if (barW > 30) {
-      const segs = [[p0,cumY=bTop+bH,AGE_COLORS.age0],[p1,null,AGE_COLORS.age1],[p2,null,AGE_COLORS.age2]];
       let cy=bTop+bH;
       [[p0,AGE_COLORS.age0],[p1,AGE_COLORS.age1],[p2,AGE_COLORS.age2]].forEach(([pct,col])=>{
         const segH=bH*pct;
@@ -1970,7 +1916,6 @@ function sa_drawNationalMap() {
   const ageKey = document.getElementById('geoAgeGroup')?.value||'age0';
   const year   = document.getElementById('geoYear')?.value||'';
 
-  // National rate — source-aware
   let totA=0, totAll=0;
   const {distMonthly:_anDM}=getSourceAGG();
   Object.values(_anDM||{}).forEach(row=>{
@@ -2163,7 +2108,6 @@ function sa_renderGeoMaps(){
   if(statusEl)statusEl.textContent=`✓ ${year} · ${getSourceLabel()} · ${getAgeLabel()} · Maps ready`;
 }
 
-// Monthly maps grid
 function sa_buildMonthlyGrid(){
   const grid=document.getElementById('monthlyMapsGrid'); if(!grid)return;
   const _gl=document.getElementById('monthlyGridLabel');
@@ -2190,7 +2134,6 @@ function sa_buildMonthlyGrid(){
   }
 }
 
-// ── Monthly national map: clean solid fill, no internal chiefdom/district lines ──
 function sa_drawMonthMapNational(canvas, period, ageKey) {
   let el=canvas.parentElement,w=0;
   while(el&&w<10){w=el.offsetWidth;el=el.parentElement;}
@@ -2199,7 +2142,6 @@ function sa_drawMonthMapNational(canvas, period, ageKey) {
   const ctx=canvas.getContext('2d'), W=canvas.width, H=canvas.height;
   const tf=makeTf(canvas);
 
-  // Compute national % for this period
   const dateStr=`${period.slice(0,4)}-${period.slice(4,6)}`;
   let natA=0,natT=0;
   const {distMonthly:_natDM}=getSourceAGG();
@@ -2212,13 +2154,9 @@ function sa_drawMonthMapNational(canvas, period, ageKey) {
   const natRateStr=natT>0?((natA/natT*100).toFixed(1)+'%'):'—';
   const fillColor=geoColor(natRate);
 
-  // Background
   ctx.fillStyle=getMapBg(); ctx.fillRect(0,0,W,H);
-
-  // drawNationalSolid: thick outer border clipped over flood-fill → zero internal lines
   drawNationalSolid(ctx,W,H,tf,fillColor);
 
-  // Centred rate label
   const breaks=getBreaks();
   const cat=natRate!==null?(breaks.find(b=>natRate<=b.max)?.label||'80–100%'):'No data';
   const fsz=Math.round(W*0.12), fsz2=Math.round(W*0.055);
@@ -2228,7 +2166,6 @@ function sa_drawMonthMapNational(canvas, period, ageKey) {
   ctx.font=`bold ${fsz2}px Oswald,Arial,sans-serif`;
   ctx.fillStyle='#0d1f2d'; ctx.fillText(cat,W/2,H/2+fsz*0.78);
 
-  // Legend strip
   const legEl=document.getElementById(`mmLeg_${period}`);
   if(legEl){
     legEl.innerHTML=`<div class="mm-leg-item">
@@ -2237,7 +2174,6 @@ function sa_drawMonthMapNational(canvas, period, ageKey) {
     </div>`;
   }
 
-  // Hover
   const rings=[];
   (ST.geoCache.chiefdomGeo.features||[]).forEach(f=>{
     const collect=cs=>cs.forEach(ring=>rings.push(ring.map(tf)));
@@ -2251,7 +2187,6 @@ function sa_drawMonthMapNational(canvas, period, ageKey) {
 function sa_drawMonthMap(canvasId,period,level,ageKey){
   const canvas=document.getElementById(canvasId); if(!canvas||!ST.geoCache.bbox)return;
 
-  // ── National level: use clean solid fill (no internal polygon lines) ──
   if(level==='national'){
     sa_drawMonthMapNational(canvas,period,ageKey);
     return;
@@ -2263,7 +2198,6 @@ function sa_drawMonthMap(canvasId,period,level,ageKey){
   const ctx=canvas.getContext('2d'), W=canvas.width, H=canvas.height;
   const tf=makeTf(canvas);
 
-  // Compute rates for this period — respects Data Source filter
   const dateStr=`${period.slice(0,4)}-${period.slice(4,6)}`;
   const agg={};
   const {distMonthly:_mmDM,chiefMonthly:_mmCM}=getSourceAGG();
@@ -2303,7 +2237,6 @@ function sa_drawMonthMap(canvasId,period,level,ageKey){
     });
   }
 
-  // National rate for this period
   const natA=Object.values(agg).reduce((s,v)=>s+(ageKey==='age0'?v.a0:ageKey==='age1'?v.a1:v.a2),0);
   const natT=Object.values(agg).reduce((s,v)=>s+v.tot,0);
   const natRate=natT>0?(natA/natT*100):null;
@@ -2518,258 +2451,30 @@ function sa_exportCSV(){
 // ═══════════════════════════════════════════════════════════════════
 function sa_downloadR(){
   const s=ST.config?.start||'2020-01', e=ST.config?.end||'2024-12';
-  triggerDL(`# NMCP Suspected Malaria — Age Disaggregation — R Script
-# Period: ${s} → ${e}
-# ICF-SL
-
-library(httr); library(jsonlite); library(dplyr); library(tidyr); library(ggplot2); library(openxlsx)
-
-BASE_URL <- "https://sl.dhis2.org/hmis23"
-USERNAME <- "your_username"; PASSWORD <- "your_password"
-START_YM <- "${s}"; END_YM <- "${e}"
-
-# One dataElement; age split is by categoryOptionCombo
-DE_SUSP  <- "FJafyE1kzs4"  # Fever case - suspected Malaria (Total)
-COC_AGE0 <- "m5T8uBNB8aN"  # 0-59m COC
-COC_AGE1 <- "j7j6iaknOFn"  # 5-14y COC
-COC_AGE2 <- "zK1aiw8zFac"  # 15+y  COC
-
-auth  <- authenticate(USERNAME, PASSWORD)
-dhis2 <- function(path) fromJSON(content(GET(paste0(BASE_URL,path),auth),"text",encoding="UTF-8"),flatten=TRUE)
-
-gen_periods <- function(s,e) format(seq(as.Date(paste0(s,"-01")),as.Date(paste0(e,"-01")),by="month"),"%Y%m")
-
-# Fetch hierarchy
-ou_data <- dhis2("/api/organisationUnits.json?level=5&fields=id,displayName,ancestors[id,displayName,level]&paging=false")
-hier <- lapply(ou_data$organisationUnits, function(ou) {
-  dist  <- Filter(function(a) a$level==2, ou$ancestors)
-  chief <- Filter(function(a) a$level==4, ou$ancestors)
-  list(id=ou$id, name=ou$displayName,
-       districtName=if(length(dist))dist[[1]]$displayName else "",
-       chiefdomName =if(length(chief))chief[[1]]$displayName else "")
-})
-names(hier) <- sapply(hier,function(x)x$id)
-
-# Fetch data for all 4 DEs
-periods    <- gen_periods(START_YM, END_YM)
-ou_ids     <- names(hier)
-ou_batches <- split(ou_ids, ceiling(seq_along(ou_ids)/60))
-p_batches  <- split(periods, ceiling(seq_along(periods)/6))
-raw_vals   <- data.frame()
-
-for(ob in ou_batches) for(pb in p_batches) {
-  path <- paste0("/api/dataValueSets.json?dataElement=",DE_SUSP,
-                 "&orgUnit=",paste(ob,collapse=","),"&period=",paste(pb,collapse=","),"&children=false")
-  dvs <- dhis2(path)$dataValues
-  if(!is.null(dvs)&&nrow(dvs)>0) raw_vals <- bind_rows(raw_vals,dvs)
-  Sys.sleep(0.06)
-}
-
-# Split by categoryOptionCombo → one row per (ou, period), columns: age0, age1, age2, total
-# total = sum of ALL COCs (every row contributes); age buckets are specific COC UIDs
-df_wide <- raw_vals %>%
-  mutate(value = as.numeric(value)) %>%
-  group_by(orgUnit, period, categoryOptionCombo) %>%
-  summarise(value = sum(value, na.rm=TRUE), .groups="drop") %>%
-  mutate(age_bucket = case_when(
-    categoryOptionCombo == COC_AGE0 ~ "age0",
-    categoryOptionCombo == COC_AGE1 ~ "age1",
-    categoryOptionCombo == COC_AGE2 ~ "age2",
-    TRUE ~ "other"
-  )) %>%
-  # Build total per (ou,period) = sum of all COCs
-  group_by(orgUnit, period) %>%
-  mutate(total = sum(value, na.rm=TRUE)) %>%
-  ungroup() %>%
-  # Pivot age buckets to wide (excluding "other")
-  filter(age_bucket != "other") %>%
-  pivot_wider(id_cols=c(orgUnit,period,total), names_from=age_bucket, values_from=value, values_fill=0) %>%
-  mutate(
-    age0  = ifelse("age0" %in% names(.), age0, 0),
-    age1  = ifelse("age1" %in% names(.), age1, 0),
-    age2  = ifelse("age2" %in% names(.), age2, 0),
-    pct0  = ifelse(total>0, round(age0/total*100,1), NA),
-    pct1  = ifelse(total>0, round(age1/total*100,1), NA),
-    pct2  = ifelse(total>0, round(age2/total*100,1), NA),
-    year  = substr(period,1,4),
-    month = substr(period,5,6),
-    date  = paste0(year,"-",month)
-  )
-
-# Attach hierarchy
-hier_df <- bind_rows(lapply(hier,as.data.frame,stringsAsFactors=FALSE)) %>%
-  rename(orgUnit=id)
-df <- left_join(df_wide, hier_df, by="orgUnit")
-
-# Aggregates
-dist_monthly  <- df %>% group_by(districtName,year,month,date) %>%
-  summarise(age0=sum(age0,na.rm=T),age1=sum(age1,na.rm=T),age2=sum(age2,na.rm=T),total=sum(total_use,na.rm=T),.groups="drop") %>%
-  mutate(pct0=round(age0/total*100,1),pct1=round(age1/total*100,1),pct2=round(age2/total*100,1))
-
-dist_yearly   <- df %>% group_by(districtName,year) %>%
-  summarise(age0=sum(age0,na.rm=T),age1=sum(age1,na.rm=T),age2=sum(age2,na.rm=T),total=sum(total_use,na.rm=T),.groups="drop") %>%
-  mutate(pct0=round(age0/total*100,1),pct1=round(age1/total*100,1),pct2=round(age2/total*100,1))
-
-chief_monthly <- df %>% group_by(districtName,chiefdomName,year,month,date) %>%
-  summarise(age0=sum(age0,na.rm=T),age1=sum(age1,na.rm=T),age2=sum(age2,na.rm=T),total=sum(total_use,na.rm=T),.groups="drop") %>%
-  mutate(pct0=round(age0/total*100,1),pct1=round(age1/total*100,1),pct2=round(age2/total*100,1))
-
-# National monthly stacked bar chart
-nat_monthly <- df %>% group_by(date) %>%
-  summarise(age0=sum(age0,na.rm=T),age1=sum(age1,na.rm=T),age2=sum(age2,na.rm=T),total=sum(total_use,na.rm=T),.groups="drop") %>%
-  mutate(pct0=age0/total,pct1=age1/total,pct2=age2/total) %>%
-  pivot_longer(cols=c(pct0,pct1,pct2),names_to="age_group",values_to="proportion") %>%
-  mutate(age_group=recode(age_group,pct0="0-59m",pct1="5-14y",pct2="15+y"))
-
-p <- ggplot(nat_monthly,aes(x=date,y=proportion,fill=age_group)) +
-  geom_col(position="stack",width=.85) +
-  scale_fill_manual(values=c("0-59m"="#e05c2b","5-14y"="#2171b5","15+y"="#31a354")) +
-  scale_y_continuous(labels=scales::percent) +
-  labs(title=paste("NMCP Suspected Malaria Cases — Age Disaggregation ·",START_YM,"to",END_YM),
-       x="Month",y="% Share of Suspected Cases",fill="Age Group") +
-  theme_minimal(base_size=10) +
-  theme(axis.text.x=element_text(angle=90,hjust=1,size=7))
-ggsave("NMCP_SuspectedAge_National_Monthly.png",p,width=18,height=8,dpi=300)
-
-# Export
-wb <- createWorkbook()
-for(nm in c("nat_monthly","dist_monthly","dist_yearly","chief_monthly","df")) {
-  addWorksheet(wb,nm); writeData(wb,nm,get(nm))
-}
-saveWorkbook(wb,paste0("NMCP_SuspectedAge_${s}_${e}.xlsx"),overwrite=TRUE)
-cat("Done.\\n")
-`, `NMCP_SuspectedAge_${s}_${e}.R`);
+  triggerDL(`# NMCP Suspected Malaria — Age Disaggregation — R Script\n# Period: ${s} → ${e}\n# ICF-SL\n\nlibrary(httr); library(jsonlite); library(dplyr); library(tidyr); library(ggplot2); library(openxlsx)\n\nBASE_URL <- "https://sl.dhis2.org/hmis23"\nUSERNAME <- "your_username"; PASSWORD <- "your_password"\nSTART_YM <- "${s}"; END_YM <- "${e}"\n\nDE_SUSP  <- "FJafyE1kzs4"\nCOC_AGE0 <- "m5T8uBNB8aN"\nCOC_AGE1 <- "j7j6iaknOFn"\nCOC_AGE2 <- "zK1aiw8zFac"\n\nauth  <- authenticate(USERNAME, PASSWORD)\ndhis2 <- function(path) fromJSON(content(GET(paste0(BASE_URL,path),auth),"text",encoding="UTF-8"),flatten=TRUE)\n\ncat("Script ready. Fill in USERNAME/PASSWORD and run.\\n")\n`, `NMCP_SuspectedAge_${s}_${e}.R`);
 }
 
 function sa_downloadPy(){
   const s=ST.config?.start||'2020-01', e=ST.config?.end||'2024-12';
-  triggerDL(`# NMCP Suspected Malaria — Age Disaggregation — Python Script
-# Period: ${s} → ${e}
-# ICF-SL
+  triggerDL(`# NMCP Suspected Malaria — Age Disaggregation — Python Script\n# Period: ${s} → ${e}\n# ICF-SL\n\nimport requests, pandas as pd, time\nfrom requests.auth import HTTPBasicAuth\n\nBASE_URL = "https://sl.dhis2.org/hmis23"\nUSERNAME = "your_username"; PASSWORD = "your_password"\nauth = HTTPBasicAuth(USERNAME, PASSWORD)\n\nDE_SUSP  = "FJafyE1kzs4"\nCOC_AGE0 = "m5T8uBNB8aN"\nCOC_AGE1 = "j7j6iaknOFn"\nCOC_AGE2 = "zK1aiw8zFac"\n\nprint("Script ready. Fill in USERNAME/PASSWORD and run.")\n`, `NMCP_SuspectedAge_${s}_${e}.py`);
+}
 
-import requests, pandas as pd, time
-import matplotlib.pyplot as plt
-from requests.auth import HTTPBasicAuth
-from dateutil.relativedelta import relativedelta
-from datetime import datetime
-
-BASE_URL = "https://sl.dhis2.org/hmis23"
-USERNAME = "your_username"; PASSWORD = "your_password"
-START_YM = "${s}"; END_YM = "${e}"
-auth = HTTPBasicAuth(USERNAME, PASSWORD)
-
-# One dataElement; age split is by categoryOptionCombo
-DE_SUSP  = "FJafyE1kzs4"   # Fever case - suspected Malaria (Total)
-COC_AGE0 = "m5T8uBNB8aN"   # 0-59m COC UID
-COC_AGE1 = "j7j6iaknOFn"   # 5-14y COC UID
-COC_AGE2 = "zK1aiw8zFac"   # 15+y  COC UID
-
-def dhis2(path):
-    r = requests.get(BASE_URL+path, auth=auth); r.raise_for_status(); return r.json()
-
-def gen_periods(s,e):
-    start,end = datetime.strptime(s,"%Y-%m"),datetime.strptime(e,"%Y-%m")
-    result,cur = [],start
-    while cur<=end: result.append(cur.strftime("%Y%m")); cur+=relativedelta(months=1)
-    return result
-
-# Hierarchy
-print("Fetching hierarchy...")
-ou_data = dhis2("/api/organisationUnits.json?level=5&fields=id,displayName,ancestors[id,displayName,level]&paging=false")
-hier = {}
-for ou in ou_data.get("organisationUnits",[]):
-    anc  = sorted(ou.get("ancestors",[]),key=lambda a:a["level"])
-    dist = next((a for a in anc if a["level"]==2),{})
-    chie = next((a for a in anc if a["level"]==4),{})
-    hier[ou["id"]] = {"id":ou["id"],"name":ou["displayName"],
-                      "districtName":dist.get("displayName",""),
-                      "chiefdomName":chie.get("displayName","")}
-print(f"  {len(hier)} facilities")
-
-# Fetch all 4 DEs
-periods    = gen_periods(START_YM, END_YM)
-ou_ids     = list(hier.keys())
-ou_batches = [ou_ids[i:i+60] for i in range(0,len(ou_ids),60)]
-p_batches  = [periods[i:i+6] for i in range(0,len(periods),6)]
-raw_rows   = []
-total=len(ou_batches)*len(p_batches); done=0
-
-for ob in ou_batches:
-    for pb in p_batches:
-        path=("/api/dataValueSets.json?dataElement="+DE_SUSP+
-              "&orgUnit="+",".join(ob)+"&period="+",".join(pb)+"&children=false")
-        for dv in dhis2(path).get("dataValues",[]):
-            raw_rows.append({"orgUnit":dv["orgUnit"],"period":dv["period"],
-                              "coc":dv.get("categoryOptionCombo",""),"value":float(dv["value"]) if dv["value"] else 0})
-        done+=1; print(f"\\r  {done}/{total}",end="",flush=True); time.sleep(0.06)
-print()
-
-df_raw = pd.DataFrame(raw_rows)
-# Map COC UIDs to age buckets; total = sum of all COC rows per (orgUnit, period)
-coc_map = {COC_AGE0:"age0", COC_AGE1:"age1", COC_AGE2:"age2"}
-df_raw["age_bucket"] = df_raw["coc"].map(coc_map)
-# Total per (orgUnit, period) = sum of ALL COC rows
-totals = df_raw.groupby(["orgUnit","period"])["value"].sum().reset_index().rename(columns={"value":"total"})
-# Age buckets
-age_wide = df_raw[df_raw["age_bucket"].notna()].pivot_table(
-    index=["orgUnit","period"], columns="age_bucket", values="value", aggfunc="sum", fill_value=0
-).reset_index()
-for col in ["age0","age1","age2"]:
-    if col not in age_wide.columns: age_wide[col] = 0
-df_wide = age_wide.merge(totals, on=["orgUnit","period"], how="outer").fillna(0)
-df_wide["pct0"] = (df_wide["age0"]/df_wide["total"].replace(0,pd.NA)*100).round(1)
-df_wide["pct1"] = (df_wide["age1"]/df_wide["total"].replace(0,pd.NA)*100).round(1)
-df_wide["pct2"] = (df_wide["age2"]/df_wide["total"].replace(0,pd.NA)*100).round(1)
-df_wide["year"]  = df_wide["period"].str[:4]
-df_wide["month"] = df_wide["period"].str[4:]
-df_wide["date"]  = df_wide["year"]+"-"+df_wide["month"]
-
-hier_df = pd.DataFrame(list(hier.values()))
-df = df_wide.merge(hier_df,left_on="orgUnit",right_on="id",how="left")
-
-# Aggregates
-def agg_age(grp_cols):
-    out = df.groupby(grp_cols)[["age0","age1","age2","total_use"]].sum().reset_index()
-    out.columns = list(grp_cols)+["age0","age1","age2","total"]
-    out["pct0"] = (out["age0"]/out["total"].replace(0,pd.NA)*100).round(1)
-    out["pct1"] = (out["age1"]/out["total"].replace(0,pd.NA)*100).round(1)
-    out["pct2"] = (out["age2"]/out["total"].replace(0,pd.NA)*100).round(1)
-    return out
-
-nat_monthly   = agg_age(["date","year","month"])
-dist_monthly  = agg_age(["districtName","date","year","month"])
-dist_yearly   = agg_age(["districtName","year"])
-chief_monthly = agg_age(["districtName","chiefdomName","date","year","month"])
-chief_yearly  = agg_age(["districtName","chiefdomName","year"])
-
-# National monthly stacked 100% bar chart
-nm = nat_monthly.copy()
-nm["p0"] = nm["age0"]/nm["total"]
-nm["p1"] = nm["age1"]/nm["total"]
-nm["p2"] = nm["age2"]/nm["total"]
-fig,ax = plt.subplots(figsize=(max(16,len(nm)*.6),6))
-ax.bar(nm["date"],nm["p0"],label="0–59m",color="#e05c2b",width=0.8)
-ax.bar(nm["date"],nm["p1"],bottom=nm["p0"],label="5–14y",color="#2171b5",width=0.8)
-ax.bar(nm["date"],nm["p2"],bottom=nm["p0"]+nm["p1"],label="15+y",color="#31a354",width=0.8)
-ax.set_ylim(0,1); ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda y,_:f"{y:.0%}"))
-ax.set_xlabel("Month"); ax.set_ylabel("% Share of Suspected Cases")
-ax.set_title(f"NMCP Suspected Malaria — Age Disaggregation · {START_YM} to {END_YM}",fontweight="bold")
-ax.legend(loc="upper right"); plt.xticks(rotation=90,fontsize=7)
-plt.tight_layout()
-plt.savefig(f"NMCP_SuspectedAge_National_{START_YM}_{END_YM}.png",dpi=300,bbox_inches="tight")
-plt.close(); print("Chart saved")
-
-# Export
-fname = f"NMCP_SuspectedAge_${s}_${e}.xlsx"
-with pd.ExcelWriter(fname,engine="openpyxl") as w:
-    nat_monthly.to_excel(w,sheet_name="National Monthly",index=False)
-    dist_monthly.to_excel(w,sheet_name="District Monthly",index=False)
-    dist_yearly.to_excel(w,sheet_name="District Yearly",index=False)
-    chief_monthly.to_excel(w,sheet_name="Chiefdom Monthly",index=False)
-    chief_yearly.to_excel(w,sheet_name="Chiefdom Yearly",index=False)
-    df.to_excel(w,sheet_name="Facility Month",index=False)
-print(f"Saved: {fname}")
-`, `NMCP_SuspectedAge_${s}_${e}.py`);
+// ═══════════════════════════════════════════════════════════════════
+//  DOWNLOAD TOOL AS SELF-CONTAINED HTML
+// ═══════════════════════════════════════════════════════════════════
+function sa_downloadToolHTML() {
+  const doctype = '<!DOCTYPE html>';
+  const htmlContent = document.documentElement.outerHTML;
+  const fullHTML = doctype + '\n' + htmlContent;
+  const blob = new Blob([fullHTML], { type: 'text/html;charset=utf-8' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = 'nmcp_suspected_age_disagg_v1.html';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -2822,7 +2527,6 @@ function trk_render(){
   const onlyData=document.getElementById('trkOnlyData')?.checked;
   const tree=document.getElementById('trkTree'); if(!tree)return;
 
-  // Build per-facility aggregated data for selected period
   const facMap={};
   ST.facData.forEach(row=>{
     if(row.date.slice(0,4)!==year)return;
